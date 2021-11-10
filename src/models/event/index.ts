@@ -7,3 +7,11 @@ export interface Event {
   value: Balance;
   timestamp: number;
 }
+
+export interface MappedEvent {
+  asset: string;
+  eventType: EventType;
+  value: Balance;
+  timestamp: number;
+  address: string;
+}

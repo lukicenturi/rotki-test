@@ -9,7 +9,13 @@
       </div>
       <div class="mt-10">
         <div>
-          <GroupedFilter />
+          <GroupedFilter
+            :keyword="keyword"
+            :onKeywordChanged="onKeywordChanged"
+            :addresses="addresses"
+            :selected-addresses="selectedAddresses"
+            :set-selected-addresses="setSelectedAddresses"
+          />
         </div>
         <div>
           <BalanceTable :balances="mappedBalances" />
@@ -37,11 +43,11 @@
       const store = useStore();
 
       const totalBalances = computed(() => {
-        return store.getters.getTotalBalances;
+        return store.getters['balances/getTotalBalances'];
       });
 
       const mappedBalances = computed(() => {
-        return store.getters.getMappedBalances.map((balance: MappedBalance) => ({
+        return store.getters['balances/getMappedBalances'].map((balance: MappedBalance) => ({
           asset: balance.asset,
           amount: balance.balance.amount,
           price: balance.balance.usdValue / balance.balance.amount,
@@ -49,14 +55,44 @@
           percentage: balance.balance.usdValue / totalBalances.value * 100,
         }));
       });
+
       const fetchAllBalances = async () => {
-        await store.dispatch('fetchAllBalances');
+        await store.dispatch('balances/fetchAllBalances');
+      };
+
+      const keyword = computed(() => {
+        return store.getters['balances/getKeyword'];
+      });
+
+      const onKeywordChanged = (newKeyword: string) => {
+        store.dispatch('balances/filterAsset', {
+          keyword: newKeyword
+        })
+      };
+
+      const addresses = computed(() => {
+        return store.getters['balances/getAddresses'];
+      });
+
+      const selectedAddresses = computed(() => {
+        return store.getters['balances/getSelectedAddresses'];
+      });
+
+      const setSelectedAddresses = (newSelectedAddresses: string[]) => {
+        store.dispatch('balances/setSelectedAddresses', {
+          selectedAddresses: newSelectedAddresses
+        } );
       }
 
       return {
+        keyword,
+        onKeywordChanged,
         totalBalances,
         mappedBalances,
         fetchAllBalances,
+        addresses,
+        selectedAddresses,
+        setSelectedAddresses,
       }
     },
     methods: {

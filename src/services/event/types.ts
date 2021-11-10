@@ -1,5 +1,7 @@
 import { Event } from '@/models/event';
 
 export interface EventResponse {
-  [address: string]: Event[];
+  [address: string]: {
+    events: Event[]
+  };
 }

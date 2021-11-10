@@ -44,10 +44,12 @@
           {
             text: 'Amount',
             value: 'amount',
+            align: 'right',
           },
           {
             text: 'Price (USD)',
             value: 'price',
+            align: 'right',
           },
           {
             text: 'USD Value',
