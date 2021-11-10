@@ -1,58 +1,66 @@
 <template>
   <div class="home">
-    <div v-for="(balance, asset) in mappedBalances" :key="asset">
-      {{ asset }}
-      {{ balance.balance.usdValue }}
-    </div>
+    <v-container>
+      <div>
+        <h1>
+          ${{ formatBalance(totalBalances) }}
+        </h1>
+        <div class="text-caption">Total Balances</div>
+      </div>
+      <div class="mt-10">
+        <div>
+          <GroupedFilter />
+        </div>
+        <div>
+          <BalanceTable :balances="mappedBalances" />
+        </div>
+      </div>
+    </v-container>
   </div>
 </template>
 
 <script lang="ts">
   import { computed, defineComponent } from '@vue/composition-api';
   import { useStore } from '@/store/utils';
-
-  const headers = [
-    {
-      text: 'Asset'
-    },
-    {
-      text: 'Price in USD',
-    },
-    {
-      text: 'Amount',
-    },
-    {
-      text: 'USD Value'
-    }
-  ]
+  import { MappedBalance } from '@/models/balance';
+  import BalanceTable from "@/components/balance/BalanceTable.vue";
+  import GroupedFilter from "@/components/grouped-filter/GroupedFilter.vue";
+  import { formatBalance } from "@/utils/format-balance";
 
   export default defineComponent({
     name: 'Home',
+    components: {BalanceTable, GroupedFilter},
     created() {
       this.fetchAllBalances();
     },
     setup() {
       const store = useStore();
 
-      const balances = computed(() => {
-        return store.getters.getBalances;
+      const totalBalances = computed(() => {
+        return store.getters.getTotalBalances;
       });
 
       const mappedBalances = computed(() => {
-        return store.getters.getMappedBalances;
+        return store.getters.getMappedBalances.map((balance: MappedBalance) => ({
+          asset: balance.asset,
+          amount: balance.balance.amount,
+          price: balance.balance.usdValue / balance.balance.amount,
+          usdValue: balance.balance.usdValue,
+          percentage: balance.balance.usdValue / totalBalances.value * 100,
+        }));
       });
-
-      console.log(mappedBalances);
-
       const fetchAllBalances = async () => {
         await store.dispatch('fetchAllBalances');
       }
 
       return {
-        balances,
+        totalBalances,
         mappedBalances,
         fetchAllBalances,
       }
+    },
+    methods: {
+      formatBalance,
     }
   });
 </script>

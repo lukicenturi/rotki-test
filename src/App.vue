@@ -3,9 +3,6 @@
     <v-navigation-drawer
         v-model="drawer"
         app
-        absolute
-        bottom
-        temporary
     >
       <v-list
           nav
@@ -29,7 +26,7 @@
     <v-app-bar app>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-avatar :tile="true" class="ml-2">
+      <v-avatar :tile="true" class="ml-2" :size="32">
         <img :src="require('@/assets/logo.png')" alt="logo">
       </v-avatar>
 
